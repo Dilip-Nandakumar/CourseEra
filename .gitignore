@@ -1,7 +1,7 @@
-Algo/bin/
-Algo/obj/
-Algo/.DS_Store
-Algo/.vscode/
+Course/Algo/bin/
+Course/Algo/obj/
+Course/Algo/.DS_Store
+Course/Algo/.vscode/
 *.DS_Store
-Algo.Tests/bin/
-Algo.Tests/obj/
+Course/Algo.Tests/bin/
+Course/Algo.Tests/obj/
