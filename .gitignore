@@ -3,4 +3,5 @@ Algo/obj/
 Algo/.DS_Store
 Algo/.vscode/
 *.DS_Store
-
+Algo.Tests/bin/
+Algo.Tests/obj/
