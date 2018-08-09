@@ -23,14 +23,17 @@ namespace DynamicConnectivity
 
         public void Union(int a, int b)
         {
-            int temp = this.arr[b];
-            this.arr[b] = this.arr[a];
+            int bId = this.arr[b];
+            int aId = this.arr[a];
+
+            if(aId == bId)
+                return;
 
             for(int i = 1; i < this.arr.Length; i++)
             {
-                if(this.arr[i] == temp)
+                if(this.arr[i] == bId)
                 {
-                    this.arr[i] = this.arr[a];
+                    this.arr[i] = aId;
                 }
             }
         }

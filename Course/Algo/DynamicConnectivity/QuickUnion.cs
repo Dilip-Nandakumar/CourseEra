@@ -4,59 +4,39 @@ namespace DynamicConnectivity
 {
     public class QuickUnion
     {
-        private int[] array;
-        private int[] size;
+        private int[] arr;
 
         public QuickUnion(int n)
         {
-            this.array = new int[n + 1];
-            this.size = new int[n + 1];
+            this.arr = new int[n + 1];
             
-            for(int i = 1; i < n + 1; i++)
+            for(int i = 0; i < this.arr.Length; i++)
             {
-                this.array[i] = i;
-                this.size[i] = 1;
+                this.arr[i] = i;
             }
         }
 
-        public void Union(int x, int y)
+        int Root(int i)
         {
-            int rootx = this.Root(this.array[x]);
-            int rooty = this.Root(this.array[y]);
-
-            if(this.size[rootx] <= this.size[rooty])
+            if(this.arr[i] == i)
             {
-                this.array[rootx] = rooty;
-                this.size[rooty]+= this.size[rootx];
-                return;
+                return i;
             }
 
-            this.array[rooty] = rootx;
-            this.size[rootx]+= this.size[rooty];
-        }
-        
-        public bool IsConnected(int x, int y)
-        {
-            return this.Root(this.array[x]) ==  this.Root(this.array[y]);
+            return this.Root(this.arr[i]);
         }
 
-        private int Root(int x)
+        public void Union(int a, int b)
         {
-            while(this.array[x] != x)
-            {
-                x = this.array[x];
-                this.array[x] = this.array[this.array[x]];
-            }
+            int rootA = this.Root(a);
+            int rootB = this.Root(b);
 
-            return x;
+            this.arr[rootA] = rootB;
         }
 
-        public void Print()
+        public bool IsConnected(int a, int b)
         {
-            // for(int i = 0; i < this.array.Length; i++)
-            // {
-            //     Console.WriteLine(this.array[i]);
-            // }
+            return this.Root(a) == this.Root(b);
         }
     }
 }
