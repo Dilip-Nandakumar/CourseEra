@@ -1,8 +1,6 @@
 import edu.princeton.cs.algs4.StdRandom;
 import edu.princeton.cs.algs4.StdStats;
 
-import java.time.LocalDateTime;
-
 public class PercolationStats {
     private double[] percolationThresholds;
     private int siteCount;
@@ -48,9 +46,9 @@ public class PercolationStats {
     }
 
     public static void main(String[] args) {
-        System.out.println(LocalDateTime.now());
+        //System.out.println(LocalDateTime.now());
         PercolationStats percolationStats = new PercolationStats(1000, 100);
-        System.out.println(LocalDateTime.now());
+        //System.out.println(LocalDateTime.now());
 
         System.out.println(percolationStats);
     }
