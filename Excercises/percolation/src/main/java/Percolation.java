@@ -1,141 +1,120 @@
-enum Site
-{
-    Open(0),
-    Full(1);
-
-    private final int site;
-
-    Site(int site) {
-        this.site = site;
-    }
-}
+import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
-    private int[] array;
-    private int[] size;
-    private Site[][] grid;
+    private int[] site;
+    private WeightedQuickUnionUF uf;
+    private int siteCount;
+    private int openSiteCount;
+    private int[][] adjacentSites = {{1, 0}, {-1, 0}, {0, 1}, {0, - 1}};
     private int n;
-    private int openCount = 0;
-    private int[][] movements = new int[][]{{0, -1}, {0, 1}, {-1, 0}, {1, 0}};
 
-    public Percolation(int n) // create n-by-n grid, with all sites blocked
-    {
-        if(n < 0)
-        {
-            throw new IllegalArgumentException();
-        }
+    public Percolation(int n) {
+        validate(n);
 
         this.n = n;
-        array = new int[(n * n) + 1];
-        size = new int[(n * n) + 1];
-        grid = new Site[n + 1][n + 1];
+        siteCount = n * n;
+        site = new int[siteCount + 2];
+        uf = new WeightedQuickUnionUF(siteCount + 2);
+    }
 
-        for(int i = 1; i < array.length; i++)
-        {
-            array[i] = i;
-            size[i] = 1;
+    public void open(int row, int col) {
+        validate(row, col);
+
+        if(site[getSiteIndex(row, col)] == 0) {
+            site[getSiteIndex(row, col)] = 1;
+            openSiteCount++;
+            unionAdjacentSites(row, col);
         }
     }
 
-    public void open(int row, int col) // open site (row, col) if it is not open already
+    public boolean isOpen(int row, int col) {
+        validate(row, col);
+
+        return site[getSiteIndex(row, col)] == 1;
+    }
+
+    public boolean isFull(int row, int col) {
+        validate(row, col);
+
+        return site[getSiteIndex(row, col)] == 0;
+    }
+
+    public int numberOfOpenSites() {
+        return openSiteCount;
+    }
+
+    public boolean percolates() {
+        return uf.connected(0, siteCount + 1);
+    }
+
+    public String toString()
     {
-        if(IsOutOfRange(row) || IsOutOfRange(col))
+        StringBuilder sb = new StringBuilder();
+
+        for(int i = 1; i <= siteCount; i++)
         {
-            throw new IllegalArgumentException();
-        }
+            sb.append(site[i]);
 
-        grid[row][col] = Site.Open;
-        int index = GetIndex(row, col);
-
-        for(int i = 0; i < movements.length; i++)
-        {
-            int adjRow = row + movements[i][0];
-            int adjCol = col + movements[i][1];
-            int adjIndex = GetIndex(adjRow, adjCol);
-
-            if(isOpen(adjRow, adjCol))
+            if((i%n) == 0)
             {
-                Union(index, adjIndex);
+                sb.append("\n");
             }
         }
 
-        openCount++;
+        return sb.toString();
     }
 
-    public boolean isOpen(int row, int col) // is site (row, col) open?
+    private void validate(int n)
     {
-        if(IsOutOfRange(row) || IsOutOfRange(col))
+        if (n <= 0) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void validate(int row, int col)
+    {
+        if(row <= 0 || col <= 0)
         {
             throw new IllegalArgumentException();
         }
-
-        return grid[row][col] == Site.Open;
     }
 
-    public boolean isFull(int row, int col) // is site (row, col) full?
+    private boolean isSiteValid(int row, int col)
     {
-        if(IsOutOfRange(row) || IsOutOfRange(col))
+        if(row <= 0 || col <= 0 || row > n || col > n)
         {
-            throw new IllegalArgumentException();
+            return false;
         }
 
-        return grid[row][col] == Site.Full;
+        return true;
     }
 
-    public int numberOfOpenSites() // number of open sites
+    private void unionAdjacentSites(int row, int col)
     {
-        return openCount;
-    }
-
-    public boolean percolates() // does the system percolate?
-    {
-        return false;
-    }
-
-    private void Union(int x, int y)
-    {
-        int rootx = Root(array[x]);
-        int rooty = Root(array[y]);
-
-        if(size[rootx] <= size[rooty])
+        for(int i = 0; i < 4; i++)
         {
-            array[rootx] = rooty;
-            size[rooty]+= size[rootx];
-            return;
+            int adjacentRow = row + adjacentSites[i][0];
+            int adjacentCol = col + adjacentSites[i][1];
+
+            if(isSiteValid(adjacentRow, adjacentCol) && isOpen(adjacentRow, adjacentCol))
+            {
+                uf.union(getSiteIndex(row, col), getSiteIndex(adjacentRow, adjacentCol));
+            }
         }
 
-        array[rooty] = rootx;
-        size[rootx]+= size[rooty];
-    }
-
-    private boolean IsConnected(int x, int y)
-    {
-        return Root(array[x]) == Root(array[y]);
-    }
-
-    private int Root(int x)
-    {
-        while(array[x] != x)
+        if(row == 1)
         {
-            x = array[x];
-            this.array[x] = this.array[this.array[x]];
+            uf.union(getSiteIndex(row, col), 0);
         }
 
-        return x;
-    }
-
-    private int GetIndex(int row, int column)
-    {
-        return (row - 1) * n + column;
-    }
-
-    private boolean IsOutOfRange(int i)
-    {
-        if(i < 0 || i > n)
+        if(row == n)
         {
-            return true;
+            uf.union(getSiteIndex(row, col), siteCount + 1);
         }
+    }
 
-        return false;
+    private int getSiteIndex(int row, int col)
+    {
+        return (n * (row - 1)) + col;
     }
 }
