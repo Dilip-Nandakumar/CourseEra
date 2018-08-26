@@ -52,7 +52,6 @@ public class PercolationStats {
         PercolationStats percolationStats = new PercolationStats(1000, 100);
         System.out.println(LocalDateTime.now());
 
-
         System.out.println(percolationStats);
     }
 
